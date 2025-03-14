@@ -1,0 +1,14 @@
+{% extends "codingapp/base.html" %}
+
+{% block title %}Add Question - {{ module.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Add a Question to {{ module.title }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Add Question</button>
+    </form>
+</div>
+{% endblock %}

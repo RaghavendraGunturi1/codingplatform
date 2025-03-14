@@ -1,0 +1,107 @@
+{% extends 'codingapp/base.html' %}
+
+{% block title %}{{ question.title }}{% endblock %}
+
+{% block content %}
+    <div class="card p-4">
+        <h2>{{ question.title }}</h2>
+        <p>{{ question.description }}</p>
+
+        <h3>Submit Your Code:</h3>
+
+        <form method="post" action="{% url 'question_detail' question.pk %}">
+            {% csrf_token %}
+            
+            <!-- Language Selection Dropdown -->
+            <label for="language-select"><strong>Select Language:</strong></label>
+            <select id="language-select" name="language" class="form-control mb-2">
+                <option value="python" data-mode="python" {% if selected_language == 'python' %}selected{% endif %}>Python</option>
+                <option value="c" data-mode="text/x-csrc" {% if selected_language == 'c' %}selected{% endif %}>C</option>
+                <option value="cpp" data-mode="text/x-c++src" {% if selected_language == 'cpp' %}selected{% endif %}>C++</option>
+                <option value="java" data-mode="text/x-java" {% if selected_language == 'java' %}selected{% endif %}>Java</option>
+                <option value="javascript" data-mode="javascript" {% if selected_language == 'javascript' %}selected{% endif %}>JavaScript</option>
+            </select>
+
+            <!-- ✅ Preserve last submitted code -->
+            <textarea id="code-editor" name="code">{{ code }}</textarea><br>
+            <button class="btn btn-primary">Submit</button>
+        </form>
+
+        {% if results %}
+        <h3 class="mt-4">Test Case Results:</h3>
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Input</th>
+                    <th>Expected Output</th>
+                    <th>Actual Output</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                <tr>
+                    <td><pre>{{ result.input }}</pre></td>
+                    <td><pre>{{ result.expected_output }}</pre></td>
+                    <td><pre>{{ result.actual_output }}</pre></td>
+                    <td class="{% if result.status == 'Accepted' %}text-success{% else %}text-danger{% endif %}">
+                        {{ result.status }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+
+        {% if error_output %}
+        <h3 class="mt-4 text-danger">Error Message:</h3>
+        <pre class="bg-light p-3 text-danger">{{ error_output }}</pre>
+        {% endif %}
+
+        {% if error %}
+        <p class="text-danger">Error: {{ error }}</p>
+        {% endif %}
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var textarea = document.getElementById("code-editor");
+            var languageSelect = document.getElementById("language-select");
+    
+            // Language mapping for CodeMirror
+            var languageModes = {
+                "python": "python",
+                "c": "text/x-csrc",
+                "cpp": "text/x-c++src",
+                "java": "text/x-java",
+                "javascript": "javascript"
+            };
+    
+            if (textarea) {
+                var editor = CodeMirror.fromTextArea(textarea, {
+                    mode: languageModes[languageSelect.value], // Default mode
+                    lineNumbers: true,
+                    theme: "dracula",
+                    indentUnit: 4,
+                    matchBrackets: true,
+                    autoCloseBrackets: true,
+                });
+    
+                // ✅ Preserve submitted code inside editor
+                editor.setValue(`{{ code|escapejs }}`);
+    
+                // ✅ Ensure correct code submission from editor
+                document.querySelector("form").addEventListener("submit", function () {
+                    textarea.value = editor.getValue();
+                });
+    
+                // ✅ Change CodeMirror mode when language selection changes
+                languageSelect.addEventListener("change", function () {
+                    var selectedMode = languageModes[this.value];
+                    editor.setOption("mode", selectedMode);
+                });
+            }
+        });
+    </script>
+
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "codingapp/base.html" %}
+
+{% block title %}{{ module.title }} - Coding Platform{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>{{ module.title }}</h2>
+    <p>{{ module.description }}</p>
+
+    {% if user.is_staff %}
+        <a href="{% url 'add_question' module.id %}" class="btn btn-primary">Add Question</a>
+    {% endif %}
+
+    <h3 class="mt-4">Questions:</h3>
+    <ul class="list-group">
+        {% for question in module.questions.all %}
+            <li class="list-group-item">
+                <a href="{% url 'question_detail' question.id %}">{{ question.title }}</a>
+            </li>
+        {% empty %}
+            <li class="list-group-item text-muted">No questions available.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
