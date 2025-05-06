@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: coding-platform
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn codingplatform.wsgi:application"
+    envVars:
+      - key: DJANGO_SECRET_KEY
+        value: your-very-secret-key
+      - key: DJANGO_DEBUG
+        value: False
+      - key: JUDGE0_API_KEY
+        value: your-real-judge0-api-key

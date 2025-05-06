@@ -1,44 +1,64 @@
-{% extends 'codingapp/base.html' %}
+{% extends "codingapp/base.html" %}
 
-{% block title %}User Dashboard{% endblock %}
+{% block title %}
+    Dashboard - {{ user.username }}
+{% endblock %}
 
 {% block content %}
-    <div class="container mt-4">
+    <div class="card p-4">
         <h2>Welcome, {{ user.username }}!</h2>
         <p>Email: {{ user.email|default:"Not provided" }}</p>
-        
-        <h3 class="mt-4">Your Past Submissions</h3>
-        
+
+        <h3>Your Past Submissions</h3>
         {% if user_submissions %}
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Submitted At</th>
-                        <th>Question</th>
-                        <th>Code</th>
-                        
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for submission in user_submissions %}
-                    <tr>
-                        <td>{{ submission.submitted_at }}</td>
-                        <td>{{ submission.question.title }}</td>
-                        <td><pre>{{ submission.code }}</pre></td>
-                        <td>
-                            {% if submission.status == "Accepted" %}
-                                <span class="badge bg-success">Accepted</span>
-                            {% else %}
-                                <span class="badge bg-danger">Rejected</span>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Submitted At</th>
+                            <th>Question</th>
+                            <th>Language</th>
+                            <th>Code</th>
+                            <th>Status</th>
+                            <th>Output/Error</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for submission in user_submissions %}
+                        <tr>
+                            <td>{{ submission.submitted_at|date:"Y-m-d H:i" }}</td>
+                            <td>
+                                <a href="{% url 'question_detail' submission.question.pk %}" class="text-decoration-none">
+                                    {{ submission.question.title }}
+                                </a>
+                            </td>
+                            <td>{{ submission.language|capfirst }}</td>
+                            <td><pre class="mb-0 text-wrap" style="max-width: 300px;">{{ submission.code|truncatechars:100 }}</pre></td>
+                            <td>
+                                {% if submission.status == "Accepted" %}
+                                    <span class="badge bg-success">Accepted</span>
+                                {% elif submission.status == "Rejected" %}
+                                    <span class="badge bg-danger">Rejected</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ submission.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if submission.output %}
+                                    <small class="text-muted">{{ submission.output|truncatechars:50 }}</small>
+                                {% elif submission.error %}
+                                    <small class="text-danger">{{ submission.error|truncatechars:50 }}</small>
+                                {% else %}
+                                    <small class="text-muted">N/A</small>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         {% else %}
-            <p>You haven't made any submissions yet.</p>
+            <p class="text-muted">You haven't made any submissions yet. Start by exploring <a href="{% url 'question_list' %}">available questions</a>.</p>
         {% endif %}
     </div>
 {% endblock %}
