@@ -15,9 +15,9 @@ JUDGE0_API_KEY = os.getenv('JUDGE0_API_KEY', '9fbd908224mshda77b4f2563d12dp1997c
 DEBUG = os.getenv('DEBUG', 'False') == 'True'  # Set via environment variable on Render
 
 # Allow Render's domain and local development hosts
-ALLOWED_HOSTS = [
-    ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'codingplatform.railway.app']
-   ]
+
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'codingplatform.railway.app']
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
