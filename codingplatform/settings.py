@@ -16,7 +16,7 @@ DEBUG = os.getenv('DEBUG', 'False') == 'True'  # Set via environment variable on
 
 # Allow Render's domain and local development hosts
 ALLOWED_HOSTS = [
-    ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'your-app-name.railway.app']
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'codingplatform.railway.app']
    ]
 
 INSTALLED_APPS = [
